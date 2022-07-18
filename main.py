@@ -6,17 +6,9 @@ from selenium.webdriver.common.by import By
 import random
 
 # ALGORITHMS
-# numbers represent the index of the answers
-opts = {
-    1: [1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3],
-    2: [15, 16, 17, 18, 19, 20, 21, 22],
-    3: [0, 0, 0, 0, 1],
-    4: [0, 2, 3],
-    5: ['not convenient', 'masks can become dirty', 'nil']
-}
 
 # First item is empty, so that index of scope[] can match with question number
-# Each option in the question is a dictionary, the key being the option value, and the value being its XPath
+# Each option in the question is a Map, the key being the option value, and the value being its XPath
 scope = [
     {},
     {
@@ -28,6 +20,12 @@ scope = [
         '//*[@id="i14"]/div[3]/div',
         0:
         '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[1]/input',
+    },
+    {
+        8: '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[1]/input',
+        10: '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[1]/input',
+        15: '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[1]/input',
+        20: '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[1]/input',
     },
     {
         "yes": '//*[@id="i33"]/div[3]/div',
@@ -60,16 +58,47 @@ browser.get("https://forms.gle/cADiu4wdfWZX3nSQ9")
 # submitbutton = browser.find_element_by_class_name("appsMaterialWizButtonPaperbuttonContent")
 
 # XPATH SELECTORS
-qnNo = 1
-for qn in scope:
-    if (qnNo == 1):
-        randomChoice = [3, 3, 4, 4, 4, 4, 4, 4, 4, 5, 5]
-        browser.find_elements(By.XPATH,scope[1][random.choice(randomChoice)])[0].click()
-    if (qnNo == 2):
-        randomChoice = []
-        
+
+def submitResponse():
+    qnNo = 0
+    for qn in scope:
+        qnNo += 1
+        if (qnNo == 1):
+            randomChoice = [3, 3, 4, 4, 4, 4, 4, 4, 4, 5, 5]
+            browser.find_elements(By.XPATH,scope[qnNo][random.choice(randomChoice)])[0].click()
+        if (qnNo == 2):
+            randomChoice = [8, 8, 10, 10, 10, 10, 15, 15, 15, 15, 15, 20, 20, 20, 20, 20, 20]
+            choice = random.choice(randomChoice)
+            browser.find_elements(By.XPATH,scope[qnNo][choice])[0].send_keys(str(choice))
+        if (qnNo == 3):
+            randomChoice = ['yes', 'no']
+            browser.find_elements(By.XPATH,scope[qnNo][random.choice(randomChoice)])[0].click()
+        if (qnNo == 4):
+            randomChoice = [
+                "hang it on a hook","hang it on a hook","hang it on a hook",
+                "place it in a laundry basket",
+                "place it in a closed container","place it in a closed container",
+                "throw it away"
+                ]
+            browser.find_elements(By.XPATH,scope[qnNo][random.choice(randomChoice)])[0].click()
+        if (qnNo==5):
+            browser.find_elements(By.XPATH,scope[qnNo]['limitations'])[0].send_keys(
+                random.choice([
+                    'nil',
+                    'masks exposed to dust',
+                    'masks become dirty',
+                    'unhygienic',
+                    'inconvenient',
+                ])
+            )
+    browser.find_elements(By.XPATH,'//*[@id="mG61Hd"]/div[2]/div/div[3]/div[1]/div[1]/div/span/span')[0].click()
 
 # SEND ACTIONS
+targ_resp = 1
+sent_resp = 0
+while sent_resp < targ_resp:
+    submitResponse()
+    sent_resp += 1
 
 # CLOSE INSTANCE
 browser.close()
